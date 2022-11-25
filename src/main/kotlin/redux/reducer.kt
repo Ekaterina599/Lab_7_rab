@@ -8,6 +8,7 @@ import ChangeMode
 import CourseAction
 import MarkStudent
 import ModeAction
+import RemoveStudent
 import StudentAction
 import react.Reducer
 import tools.plus
@@ -20,24 +21,21 @@ val appReducer: Reducer<AppState, RAction> =
                 courseReducer(state.courses, action),
                 state.students,
                 state.mode,
-                state.grade,
-                state.color
+                state.grade
             )
 
             is StudentAction -> AppState(
                 state.courses,
                 studentReducer(state.students, action),
                 state.mode,
-                state.grade,
-                state.color
+                state.grade
             )
 
             is ModeAction -> AppState(
                 state.courses,
                 state.students,
                 modeReducer(state.mode, action),
-                state.grade,
-                state.color
+                state.grade
             )
 
             else -> state
@@ -72,13 +70,23 @@ val courseReducer: Reducer<CourseState, CourseAction> =
                 }
             )
 
+            is RemoveStudent -> state.replace(
+                { _, course -> course.id == action.courseId },
+                { course ->
+                    course.copy(
+                        students = course.students.filter {it != action.studentId}.toTypedArray()
+                        //добавляются студенты, которых не выбрали как удаленные
+                    )
+                }
+            )
+
             is AddGrade -> state.replace(
                 { _, course -> course.id == action.courseId },
                 { course ->
                     course.copy(
                         grades = course.grades.replace(
                             { index, _ -> course.students[index] == action.studentId },
-                            { grade -> action.grade}
+                            { action.grade}
                         )
                     )
                 }
