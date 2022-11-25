@@ -5,7 +5,6 @@ import redux.RAction
 open class CourseAction: RAction
 open class StudentAction: RAction
 open class ModeAction: RAction
-open class ColorAction: RAction
 
 class MarkStudent(
     val courseId: CourseId,
@@ -31,9 +30,9 @@ class AddGrade(
     val grade: Grade
 ): CourseAction()
 
-class ChangeMode() : ModeAction()
+class RemoveStudent(
+    val courseId: CourseId,
+    val studentId: StudentId
+):CourseAction()
 
-class ChangeColor(
-   index: Int,
-   color: Color
-) : ColorAction()
+class ChangeMode() : ModeAction()
