@@ -3,6 +3,7 @@ package component
 import AddGrade
 import AddStudentToCourse
 import MarkStudent
+import RemoveStudent
 import data.CourseId
 import kotlinx.js.Record
 import kotlinx.js.get
@@ -32,6 +33,7 @@ val CCourse = FC<Props>("Course") {
     val candidates = allStudents.toList() - students.toSet()
     val dispatch = useDispatch<RAction, Unit>()
 
+    val removeStudentSelectRef = useRef<HTMLSelectElement>()
     val addStudentSelectRef = useRef<HTMLSelectElement>()
     div {
         h3 { +course.name }
@@ -52,6 +54,22 @@ val CCourse = FC<Props>("Course") {
                 }
             }
         }
+        details {
+            summary { +"Remove Student Course" }
+            select {
+                ref = removeStudentSelectRef
+                students.forEach { option { +it.id } }
+            }
+            button {
+                +"Add"
+                onClick = {
+                    removeStudentSelectRef.current?.value?.let { student ->
+                        val studentFind = students.find {it.id == student}!!
+                        dispatch(RemoveStudent(courseId, studentFind.id))
+                    }
+                }
+            }
+        }
         CStudentList {
             this.students = students.toTypedArray()
             this.marked = course.marked
@@ -62,3 +80,4 @@ val CCourse = FC<Props>("Course") {
         }
     }
 }
+
